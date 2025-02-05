@@ -1,9 +1,10 @@
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
-const { neon } = require("@neondatabase/serverless");
+const { neon, neonConfig } = require("@neondatabase/serverless");
 
 async function dbClient() {
+  neonConfig.fetchConnectionCache = true;
   const sql = neon(process.env.DATABASE_URL);
   return sql;
 }
@@ -28,8 +29,5 @@ app.use((req, res, next) => {
     error: "Not Found",
   });
 });
-
-// server app
-// app.listen(3000, () => console.log("listening on port 3000"));
 
 exports.handler = serverless(app);
