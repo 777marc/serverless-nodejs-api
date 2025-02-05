@@ -1,13 +1,19 @@
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
+const { neon } = require("@neondatabase/serverless");
 
-app.get("/", (req, res, next) => {
+async function dbClient() {
+  const sql = neon(process.env.DATABASE_URL);
+  return sql;
+}
+
+app.get("/", async (req, res, next) => {
+  const db = await dbClient();
+  const results = await db`select name, value from playing_with_neon;`;
   return res.status(200).json({
     message: "Hello from root!",
-    DATABASE_URL: process.env.DATABASE_URL
-      ? process.env.DATABASE_URL
-      : "not provided",
+    ressults: results,
   });
 });
 
